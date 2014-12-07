@@ -14,7 +14,7 @@ import qualified Propellor.Property.User as User
 --import qualified Propellor.Property.Hostname as Hostname
 --import qualified Propellor.Property.Reboot as Reboot
 --import qualified Propellor.Property.Tor as Tor
-import qualified Propellor.Property.Docker as Docker
+--import qualified Propellor.Property.Docker as Docker
 
 main :: IO ()
 main = defaultMain hosts
@@ -23,17 +23,10 @@ main = defaultMain hosts
 -- Edit this to configure propellor!
 hosts :: [Host]
 hosts =
-	[ host "mybox.example.com"
-		& os (System (Debian Unstable) "amd64")
-		& Apt.stdSourcesList
+	[ host "server.local"
+		& os (System (Ubuntu "14.04") "amd64")
 		& Apt.unattendedUpgrades
-		& Apt.installed ["etckeeper"]
 		& Apt.installed ["ssh"]
-		& User.hasSomePassword "root"
-		& Network.ipv6to4
-		& File.dirExists "/var/www"
-		& Docker.docked webserverContainer
-		& Docker.garbageCollected `period` Daily
 		& Cron.runPropellor "30 * * * *"
 
 	-- add more hosts here...
@@ -41,10 +34,10 @@ hosts =
 	]
 
 -- A generic webserver in a Docker container.
-webserverContainer :: Docker.Container
-webserverContainer = Docker.container "webserver" "joeyh/debian-stable"
-	& os (System (Debian (Stable "wheezy")) "amd64")
-	& Apt.stdSourcesList
-	& Docker.publish "80:80"
-	& Docker.volume "/var/www:/var/www"
-	& Apt.serviceInstalledRunning "apache2"
+--webserverContainer :: Docker.Container
+--webserverContainer = Docker.container "webserver" "joeyh/debian-stable"
+--	& os (System (Debian (Stable "wheezy")) "amd64")
+--	& Apt.stdSourcesList
+--	& Docker.publish "80:80"
+--	& Docker.volume "/var/www:/var/www"
+--	& Apt.serviceInstalledRunning "apache2"
